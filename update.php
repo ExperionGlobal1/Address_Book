@@ -298,13 +298,30 @@ mysqli_close($conn);
                         }?>
                     </span>
     </p>
-      <p>Avtar: <input type="file" name="avatar" value="<?php echo $row['Avatar']; ?>"><span><?php echo $row['Avatar']; ?></span></p>
+      <p>Avtar: <input type="file" name="avatar" onchange="previewAvatar(event);" value="<?php echo $row['Avatar']; ?>" required><span><?php echo $row['Avatar']; ?></span>
+         <img id = "preview" style = "max-width : 100px;"><br><br>
+    </p>
       
       <input type="submit" name="update" value="Update">
       <a href="Dashboard.php">
       <button class="btn btn-danger" type="submit" name="Cancel"><a href="Dashboard.php" style=" text-decoration: none;color:white">Cancel </a></button>
     
     </form>
+    
+    <script> 
+       function previewAvatar(event) 
+        {      var reader = new FileReader();    
+        reader.onload = function() 
+           {     
+            var output = document.getElementById('preview');   
+                output.src = reader.result;   
+             }  
+               reader.readAsDataURL(event.target.files[0]);      
+              }
+    </script>
+
+
+
   </body>
 </html>
 

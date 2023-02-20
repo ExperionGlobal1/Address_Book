@@ -307,13 +307,13 @@ if(isset($_SESSION['userEmail'])){
 
                 <div class="form-group">
                     <label>Select Image File</label>
-                    <input type="file" name="avatar" id="avatar" class="form-control" style="width:75%" />
+                    <input type="file" name="avatar" id="avatar" onchange="previewAvatar(event);" class="form-control" style="width:75%" />
                     <span style="color:red">
                         <?php if(isset($avtarerror)){
                         echo $avtarerror;
                         }?>
                     </span>
-                    
+                     <img id = "preview" style = "max-width : 100px; "><br><br> 
                 </div>
                 <br>
                 <button class="btn btn-primary" type="submit" style="margin-left:9vw;">Submit</button>
@@ -321,6 +321,18 @@ if(isset($_SESSION['userEmail'])){
             </div>
         </div>
     </form>
+    <!-- Avatar preview function -->
+    <script> 
+       function previewAvatar(event) 
+        {      var reader = new FileReader();    
+        reader.onload = function() 
+           {     
+            var output = document.getElementById('preview');   
+                output.src = reader.result;   
+             }  
+               reader.readAsDataURL(event.target.files[0]);      
+              }
+    </script>
 </body>
 </html>
 <?php
