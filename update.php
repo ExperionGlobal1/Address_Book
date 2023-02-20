@@ -8,7 +8,7 @@ if(isset($_SESSION['userEmail'])){
    if(isset($_GET['id'])) 
     {
     $id = $_GET['id'];
-    $sql = "SELECT ID,Avatar, Name, Phone,District,Pin_code, State,User_id ,Country FROM contacts WHERE id = $id";
+    $sql = "SELECT ID,Avatar,Name,Phone,District,Pin_code,State,User_id ,Country FROM contacts WHERE id = $id";
     $result = mysqli_query($conn, $sql);
     $row = mysqli_fetch_assoc($result);
     }
@@ -22,7 +22,46 @@ if(isset($_POST['update']))
     $district=$_POST['district'];
     $pincode=$_POST['pincode'];
     $state=$_POST['state'];
-    $avtar=$_POST['avatar'];
+
+    $target_dir = "Images/";
+    $avatar=$_FILES['avatar']['name'];
+    $target_file = $target_dir . basename($avatar);
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+    // Check if image file is a actual image or fake image
+    $check = getimagesize($_FILES["avatar"]["tmp_name"]);
+    if($check !== false) {
+    echo "File is an image - " . $check["mime"] . ".";
+    $uploadOk = 1;
+     } else {
+    echo "File is not an image.";
+    $uploadOk = 0;
+    }
+
+    // Check if file already exists
+    if (file_exists($target_file)) {
+        echo "Sorry, file already exists.";
+        $uploadOk = 0;
+        }
+     // Allow certain file formats
+  if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+  && $imageFileType != "gif" ) {
+  echo "Sorry, only JPG, JPEG, PNG & GIF files are allowed.";
+   $uploadOk = 0;
+  }
+
+ // Check if $uploadOk is set to 0 by an error
+ if ($uploadOk == 0) {
+  echo "Sorry, your file was not uploaded.";
+   // if everything is ok, try to upload file
+   } else {
+ if (move_uploaded_file($_FILES["avatar"]["tmp_name"], $target_file)) {
+    echo "The file ". htmlspecialchars( basename( $_FILES["avatar"]["name"])). " has been uploaded.";
+    } else {
+    echo "Sorry, there was an error uploading your file.";
+     }
+   }
 
 
     //Server side validation
@@ -137,7 +176,7 @@ if(isset($_POST['update']))
   
   if($namebool == true && $phonebool == true && $countrybool == true && $distbool == true && $pinbool == true && $statebool == true ){
 
-    $sql = "UPDATE contacts SET Name='$name', Phone='$phone',District='$district',Pin_code='$pincode', State='$state', Country='$country', Avatar='$avtar'  WHERE id='$id'";
+    $sql = "UPDATE contacts SET Name='$name', Phone='$phone',District='$district',Pin_code='$pincode', State='$state', Country='$country', Avatar='$avatar'  WHERE id='$id'";
     if (mysqli_query($conn, $sql))
      {
         echo '<script>alert("Updated successfully!");location.href="Dashboard.php"</script>';
@@ -252,7 +291,7 @@ mysqli_close($conn);
             </div>
         </div>
     </nav>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
       <h4>Update Record</h4>
       <input type="hidden" name="id" value="<?php echo $row['ID']; ?>">
       <p>Name: <input type="text" name="name" value="<?php echo $row['Name']; ?>">
